@@ -7,6 +7,8 @@ import {hardwareAccelerationMode} from './modules/HardwareAccelerationModule.js'
 import {autoUpdater} from './modules/AutoUpdater.js';
 import {allowInternalOrigins} from './modules/BlockNotAllowdOrigins.js';
 import {allowExternalUrls} from './modules/ExternalUrls.js';
+import { ipcMain } from 'electron';
+import { exec } from 'node:child_process';
 
 
 export async function initApp(initConfig: AppInitConfig) {
@@ -43,4 +45,19 @@ export async function initApp(initConfig: AppInitConfig) {
     );
 
   await moduleRunner;
+
+  ipcMain.handle('run-playwright-test', async () => {
+    return new Promise((resolve, reject) => {
+      const child = exec('npm test', { cwd: process.cwd() }, (error, stdout, stderr) => {
+        if (error) {
+          reject(stderr || error.message);
+          return;
+        }
+        resolve(stdout);
+      });
+      // Optionally, you can log output to the main process console
+      child.stdout?.on('data', data => process.stdout.write(data));
+      child.stderr?.on('data', data => process.stderr.write(data));
+    });
+  });
 }

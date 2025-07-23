@@ -3,8 +3,20 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+// Dynamically access the exposed 'send' function from preload
+const send = (window as unknown as { [key: string]: ((channel: string, message: string) => Promise<unknown>) })[btoa('send')];
+
 function App() {
   const [count, setCount] = useState(0)
+
+  const handleRunPlaywrightTest = async () => {
+    try {
+      await send('run-playwright-test', '');
+      alert('Playwright test started!');
+    } catch (err) {
+      alert('Failed to start Playwright test. ' + (err instanceof Error ? err.message : String(err)));
+    }
+  };
 
   return (
     <>
@@ -20,6 +32,9 @@ function App() {
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
+        </button>
+        <button style={{ marginTop: 12 }} onClick={handleRunPlaywrightTest}>
+          Run Playwright Test
         </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
