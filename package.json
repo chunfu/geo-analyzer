@@ -24,7 +24,8 @@
     "typecheck": "npm run typecheck -ws --if-present",
     "create-renderer": "cd packages && node ./integrate-renderer/create-renderer.js",
     "integrate-renderer": "npm start --workspace @app/integrate-renderer",
-    "init": "npm run create-renderer && npm run integrate-renderer && npm install"
+    "init": "npm run create-renderer && npm run integrate-renderer && npm install",
+    "grab": "npx --yes tsx tests/grabTheThings.ts"
   },
   "devDependencies": {
     "@npmcli/map-workspaces": "4.0.2",
@@ -34,7 +35,9 @@
     "electron": "37.2.4",
     "electron-builder": "26.0.12",
     "glob": "11.0.3",
-    "playwright": "^1.54.1"
+    "playwright": "^1.54.1",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "dependencies": {
     "@app/main": "*"
