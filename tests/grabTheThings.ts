@@ -1,9 +1,10 @@
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import searchAndCopy from "./searchAndCopy";
+import searchAndCopyGoogle from "./searchAndCopyGoogle";
 import { OutputRecord } from "./types";
 import fs from "fs";
-import { Page } from "playwright";
+import { login } from "./login";
 
 // Add stealth plugin
 chromium.use(StealthPlugin());
@@ -89,7 +90,9 @@ async function main() {
   });
   
   const context = await browser.newContext();
-  let page: Page;
+  let page = await context.newPage();
+
+  await login(page);
 
   try {
     // Loop through all questions
@@ -101,14 +104,26 @@ async function main() {
       console.log(`\n🔄 Processing question ${i + 1}/${questions.length}: ${question.substring(0, 50)}...`);
       
       try {
-        await searchAndCopy({ 
-          context, 
-          page, 
-          question, 
-          outputRecord 
+        // await searchAndCopy({ 
+        //   context, 
+        //   page, 
+        //   question, 
+        //   outputRecord 
+        // });
+        
+        // console.log(`✅ Completed ChatGPT for question ${i + 1}`);
+        
+        /*
+        // Call Google search right after ChatGPT
+        await searchAndCopyGoogle({
+          context,
+          page,
+          question,
+          outputRecord
         });
         
-        console.log(`✅ Completed question ${i + 1}`);
+        console.log(`✅ Completed Google search for question ${i + 1}`);
+        */
         
         // Add a small delay between requests to avoid rate limiting
         if (i < questions.length - 1) {
@@ -120,7 +135,7 @@ async function main() {
         // Continue with next question instead of stopping
       }
 
-      await page.close();
+      // await page.close();
     }
     
     // Export to CSV
@@ -132,7 +147,7 @@ async function main() {
   } catch (error) {
     console.error("❌ Fatal error:", error);
   } finally {
-    await browser.close();
+    // await browser.close();
   }
 }
 
