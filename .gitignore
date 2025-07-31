@@ -57,4 +57,4 @@ thumbs.db
 
 .last-run.json
 
-chatgpt-answer.txt
+*.csv
